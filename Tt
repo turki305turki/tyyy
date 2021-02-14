@@ -1,0 +1,87 @@
+try:
+	import requests
+	import os
+	import json
+	r = requests.Session()
+	
+	
+	username = input("username: ")
+	pasword = input("password: ")
+	
+	
+	
+	url = "https://www.instagram.com/accounts/login/ajax/"
+	headers = {
+	"accept":"*/*",
+	"accept-encoding":"gzip, deflate,br",
+	"accept-language": "ar,en-US;q=0.9,en;q=0.8",
+	"content-length": "279",
+	"content-type": "application/x-www-form-urlencoded",
+	"origin": "https://www.instagram.com",
+	"referer": "https://www.instagram.com/",
+	"sec-fetch-dest":"empty",
+	"sec-fetch-site":"same-origin",
+	"user-agent":"Mozilla/5.0 (Windows NT 10.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.83 Safari/537.36",
+	"x-csrftoken": "lih2ypMfhzdqwMbm5jIILqxZDj4zLeCW",
+	"x-ig-app-id": "936619743392459",
+	"x-ig-www-claim": "hmac.AR1_p9SjMFQF73bcZgzygDgxb9yBZUn83e69xoDD2qpSdmtW",
+	"x-instagram-ajax":"901e37113a69",
+	"x-requested-with":"XMLHttpRequest"
+	}
+	data = {"username":username,"enc_password":"#PWD_INSTAGRAM_BROWSER:0:1589682409:"+pasword,"queryParams":"{}","optIntoOneTap":"false"}
+	login = r.post(url,headers=headers,data=data,allow_redirects=True)
+	post_url = input("link post: ")
+	co = input("comment: ")
+	sleep = input("sleep: ")
+	if login.text.find("userId") >=0:
+		rm = post_url
+		sm = 28
+		s = rm[sm]
+		while s != "?":
+			sm+=1
+			s = rm[sm]
+		else:
+			sm-=1
+			sd = (rm[:sm] + "/?__a=1")
+		rs = r.get(sd)
+		post_id = str(rs.json()["graphql"]["shortcode_media"]["id"])
+		import random
+		ca = co
+		import time
+		comment_url = f'https://www.instagram.com/web/comments/{post_id}/add/'
+		csrftoken = login.cookies['csrftoken']
+		print('done login: ' + username)
+		head = {
+	        'accept': '*/*',
+	        'accept-encoding':'gzip, deflate, br',
+	        'accept-language': 'en-US,en;q=0.9',
+	        'content-length': '47',
+	        'content-type': 'application/x-www-form-urlencoded',
+	        'origin': 'https://www.instagram.com',
+	        'referer': 'https://www.instagram.com/p/CFM5P9BnlyY/',
+	        'sec-fetch-dest': 'empty',
+	        'sec-fetch-mode': 'cors',
+	        'sec-fetch-site': 'same-origin',
+	        'user-agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.102 Safari/537.36',
+	        'x-csrftoken': csrftoken,
+	        'x-ig-app-id': '936619743392459',
+	        'x-ig-www-claim': 'hmac.AR1c2rpKOfs9PQJlx-EoLF4rQ-K0DMnVj3wLf3_HpJyvGxyY',
+	        'x-instagram-ajax': 'a1de4804d095',
+	        'x-requested-with': 'XMLHttpRequest'
+	    } 
+		para = {
+			"comment_text": ca,
+			"replied_to_comment_id": ""
+		}
+		while True:
+			ssx = r.post(comment_url, headers=head, data=para)
+			sz = (ssx.status_code)
+			time.sleep(int(sleep))
+			if sz == 200:
+				print("done comment>> " + ca)
+			else:
+				print("Error comment>> "+ ca)
+	else:
+		print("فشل تسجيل دخول الرمز خاطئ او سكيور او حظر")
+except:
+	os.remove("comment.py")
